@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "mod.chloeprime.hitfeedback.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "LivingEntityAccessor"
+  ],
+  "client": [
+    "MixinSimpleTexture",
+    "client.ParticleEngineAccessor",
+    "client.TrackingEmitterAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

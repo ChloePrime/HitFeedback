@@ -1,0 +1,40 @@
+{
+  "feedback.flesh.sword": {
+    "sounds": [
+      "hit_feedback:feedback/flesh/sword_1",
+      "hit_feedback:feedback/flesh/sword_2",
+      "hit_feedback:feedback/flesh/sword_3",
+      "hit_feedback:feedback/flesh/sword_4",
+      "hit_feedback:feedback/flesh/sword_5",
+      "hit_feedback:feedback/flesh/sword_6",
+      "hit_feedback:feedback/flesh/sword_7"
+    ]
+  },
+  "feedback.flesh.gunshot": {
+    "sounds": [
+      "hit_feedback:feedback/flesh/gunshot_1",
+      "hit_feedback:feedback/flesh/gunshot_2",
+      "hit_feedback:feedback/flesh/gunshot_3"
+    ]
+  },
+  "feedback.flesh.punch": {
+    "sounds": [
+      "hit_feedback:feedback/flesh/punch_1",
+      "hit_feedback:feedback/flesh/punch_2",
+      "hit_feedback:feedback/flesh/punch_3",
+      "hit_feedback:feedback/flesh/punch_4"
+    ]
+  },
+  "feedback.metal.failure": {
+    "sounds": [
+      "hit_feedback:feedback/metal/failure_1",
+      "hit_feedback:feedback/metal/failure_2",
+      "hit_feedback:feedback/metal/failure_3",
+      "hit_feedback:feedback/metal/failure_4",
+      "hit_feedback:feedback/metal/failure_5",
+      "hit_feedback:feedback/metal/failure_6",
+      "hit_feedback:feedback/metal/failure_7",
+      "hit_feedback:feedback/metal/failure_8"
+    ]
+  }
+}

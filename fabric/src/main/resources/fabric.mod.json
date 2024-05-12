@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "hit_feedback",
+  "version": "${version}",
+
+  "name": "Hit Feedback",
+  "description": "Add blood and gore as hit feedback.",
+  "authors": ["ChloePrime"],
+  "contact": {},
+
+  "license": "MIT",
+  "icon": "icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [ "mod.chloeprime.hitfeedback.fabric.HitFeedbackFabric" ],
+    "client": [ "mod.chloeprime.hitfeedback.client.fabric.HitFeedbackClientFabric" ]
+  },
+  "mixins": [
+    "hit_feedback.mixins.json",
+    "hit_feedback-common.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": ">=1.18.2",
+    "architectury": ">=4.0.0"
+  }
+}

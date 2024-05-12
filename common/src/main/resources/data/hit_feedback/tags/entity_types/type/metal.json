@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:iron_golem",
+    "minecraft:minecart",
+    "minecraft:chest_minecart",
+    "minecraft:command_block_minecart",
+    "minecraft:furnace_minecart",
+    "minecraft:hopper_minecart",
+    "minecraft:spawner_minecart",
+    "minecraft:tnt_minecart",
+    {
+      "id": "cataclysm:netherite_monstrosity",
+      "required": false
+    },
+    {
+      "id": "cataclysm:the_harbinger",
+      "required": false
+    },
+    {
+      "id": "mekanism:robit",
+      "required": false
+    },
+    {
+      "id": "twilightforest:tower_golem",
+      "required": false
+    }
+  ]
+}

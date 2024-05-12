@@ -1,0 +1,38 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:skeleton",
+    "minecraft:skeleton_horse",
+    "minecraft:wither_skeleton",
+    "minecraft:stray",
+    "minecraft:shulker",
+    {
+      "id": "alexsmobs:skelewag",
+      "required": false
+    },
+    {
+      "id": "alexsmobs:bone_serpent",
+      "required": false
+    },
+    {
+      "id": "alexsmobs:bone_serpent_part",
+      "required": false
+    },
+    {
+      "id": "quark:forgotten",
+      "required": false
+    },
+    {
+      "id": "quark:stoneling",
+      "required": false
+    },
+    {
+      "id": "lycanitesmobs:lobber",
+      "required": false
+    },
+    {
+      "id": "twilightforest:lich",
+      "required": false
+    }
+  ]
+}
