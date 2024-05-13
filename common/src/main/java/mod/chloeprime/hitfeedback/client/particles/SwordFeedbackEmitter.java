@@ -7,7 +7,6 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.WeakHashMap;
 
 public class SwordFeedbackEmitter extends ParticleEmitterBase {

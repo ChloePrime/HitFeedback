@@ -1,8 +1,5 @@
 package mod.chloeprime.hitfeedback;
 
-import dev.architectury.platform.Platform;
-import dev.architectury.utils.Env;
-import mod.chloeprime.hitfeedback.client.HitFeedbackClient;
 import mod.chloeprime.hitfeedback.common.HitFeedbackTypes;
 import mod.chloeprime.hitfeedback.common.ModSoundEvents;
 import mod.chloeprime.hitfeedback.common.particle.ModParticleTypes;

@@ -1,8 +1,6 @@
 package mod.chloeprime.hitfeedback.forge;
 
-import dev.architectury.platform.Platform;
 import dev.architectury.platform.forge.EventBuses;
-import dev.architectury.utils.Env;
 import mod.chloeprime.hitfeedback.HitFeedbackMod;
 import mod.chloeprime.hitfeedback.client.HitFeedbackClient;
 import net.minecraftforge.fml.common.Mod;
