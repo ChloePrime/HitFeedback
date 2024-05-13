@@ -80,8 +80,7 @@ public class EntityPieceParticle extends SingleQuadParticle {
         RenderSystem.setShaderTexture(0, texture);
         builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
         super.render(buffer, renderInfo, partialTicks);
-        builder.end();
-        BufferUploader.end(builder);
+        BufferUploader.drawWithShader(builder.end());
     }
 
     @Override

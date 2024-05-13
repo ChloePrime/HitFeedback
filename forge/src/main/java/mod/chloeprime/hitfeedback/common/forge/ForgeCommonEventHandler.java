@@ -10,6 +10,6 @@ import net.minecraftforge.fml.common.Mod;
 public class ForgeCommonEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void onEndAttack(LivingDamageEvent event) {
-        CommonEventHandler.onEndAttack(event.getSource(), event.getEntityLiving(), event.getAmount());
+        CommonEventHandler.onEndAttack(event.getSource(), event.getEntity(), event.getAmount());
     }
 }

@@ -4,7 +4,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleTexturedParticle extends TextureSheetParticle {
@@ -14,8 +13,8 @@ public class SimpleTexturedParticle extends TextureSheetParticle {
         this.gravity = 1;
         setSpriteFromAge(sprite);
 
-        var oldVelocity = 1 / Mth.fastInvSqrt(xd * xd + yd * yd + zd * zd);
-        var newVelocity = 1 / Mth.fastInvSqrt(xv * xv + yv * yv + zv * zv);
+        var oldVelocity = Math.sqrt(xd * xd + yd * yd + zd * zd);
+        var newVelocity = Math.sqrt(xv * xv + yv * yv + zv * zv);
         var velScale = newVelocity / oldVelocity;
         this.xd *= velScale;
         this.yd *= velScale;

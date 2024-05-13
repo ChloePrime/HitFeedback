@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CommonEventHandler {
     public static void onEndAttack(DamageSource source, LivingEntity victim, float amount) {
-        if (victim.getLevel().isClientSide()) {
+        if (victim.level().isClientSide()) {
             return;
         }
         var attacker = source.getEntity();
@@ -33,7 +33,7 @@ public class CommonEventHandler {
         var feedback = HitFeedbackType.match(source, victim, amount > 0);
         if (!feedback.isServerOnly()) {
             var packet = new S2CHitFeedback(victim, feedback, position, normal);
-            ((ServerLevel) victim.level).getChunkSource().broadcast(victim, ModNetwork.CHANNEL.toPacket(NetworkManager.Side.S2C, packet));
+            ((ServerLevel) victim.level()).getChunkSource().broadcast(victim, ModNetwork.CHANNEL.toPacket(NetworkManager.Side.S2C, packet));
         }
         feedback.getHitSound().ifPresent(sound -> {
             var pitch = 1 + (victim.getRandom().nextFloat() - victim.getRandom().nextFloat()) * 0.2f;

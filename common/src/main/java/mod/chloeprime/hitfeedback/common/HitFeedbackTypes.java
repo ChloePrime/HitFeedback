@@ -2,19 +2,21 @@ package mod.chloeprime.hitfeedback.common;
 
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.Registrar;
-import dev.architectury.registry.registries.Registries;
+import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.registry.registries.RegistrySupplier;
 import mod.chloeprime.hitfeedback.HitFeedbackMod;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 
 import static mod.chloeprime.hitfeedback.HitFeedbackMod.MOD_ID;
 
 public interface HitFeedbackTypes {
-    Registrar<HitFeedbackType> REGISTRY = Registries.get(MOD_ID)
+    Registrar<HitFeedbackType> REGISTRY = RegistrarManager.get(MOD_ID)
             .<HitFeedbackType>builder(HitFeedbackMod.loc("types"))
             .build();
+
     @SuppressWarnings("unchecked")
     DeferredRegister<HitFeedbackType> DFR = DeferredRegister.create(MOD_ID, (ResourceKey<Registry<HitFeedbackType>>) REGISTRY.key());
 
@@ -32,19 +34,19 @@ public interface HitFeedbackTypes {
 
     RegistrySupplier<HitFeedbackType> BONE = DFR.register("bone", () -> new HitFeedbackType(
             null,
-            TagKey.create(Registry.ENTITY_TYPE_REGISTRY, HitFeedbackMod.loc("type/bone"))
+            TagKey.create(Registries.ENTITY_TYPE, HitFeedbackMod.loc("type/bone"))
     ));
 
     RegistrySupplier<HitFeedbackType> METAL = DFR.register("metal", () -> new HitFeedbackType(
             null,
-            TagKey.create(Registry.ENTITY_TYPE_REGISTRY, HitFeedbackMod.loc("type/metal"))
+            TagKey.create(Registries.ENTITY_TYPE, HitFeedbackMod.loc("type/metal"))
     ));
 
     RegistrySupplier<HitFeedbackType> SLIME_SWORD = DFR.register("slime_sword", () -> new HitFeedbackType(null));
 
     RegistrySupplier<HitFeedbackType> SLIME_GUNSHOT = DFR.register("slime_gunshot", () -> new HitFeedbackType(
             null,
-            TagKey.create(Registry.ENTITY_TYPE_REGISTRY, HitFeedbackMod.loc("type/slime"))
+            TagKey.create(Registries.ENTITY_TYPE, HitFeedbackMod.loc("type/slime"))
     ));
 
     RegistrySupplier<HitFeedbackType> METAL_FAILURE = DFR.register("metal_failure", () -> new HitFeedbackType(

@@ -21,8 +21,8 @@ public interface HitFeedbackAction extends BiConsumer<S2CHitFeedback, NetworkMan
         return (packet, context) -> {
             var pos = packet.position;
             var vel = packet.velocity;
-            var entity = packet.getEntity(context.getPlayer().getLevel());
-            var emitter = constructor.create(particle.get(), builder, entity, ((ClientLevel) entity.getLevel()), pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
+            var entity = packet.getEntity(context.getPlayer().level());
+            var emitter = constructor.create(particle.get(), builder, entity, ((ClientLevel) entity.level()), pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
             ((ParticleEngineAccessor) MinecraftHolder.MC.particleEngine).getTrackingEmitters().add(emitter);
         };
     }

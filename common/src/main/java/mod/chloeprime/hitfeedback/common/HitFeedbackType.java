@@ -1,10 +1,8 @@
 package mod.chloeprime.hitfeedback.common;
 
-import dev.architectury.core.RegistryEntry;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -21,7 +19,7 @@ import java.util.function.Supplier;
 
 import static mod.chloeprime.hitfeedback.common.HitFeedbackTypes.*;
 
-public class HitFeedbackType extends RegistryEntry<HitFeedbackType> {
+public class HitFeedbackType {
     private final @Nullable TagKey<EntityType<?>> tag;
     private final @Nullable Supplier<SoundEvent> sound;
     private final Set<Options> options;
@@ -59,7 +57,7 @@ public class HitFeedbackType extends RegistryEntry<HitFeedbackType> {
 
     private static HitFeedbackType matchDefault(DamageSource source, LivingEntity victim, boolean valid) {
         var attacker = source.getEntity();
-        var isGunshot = source instanceof IndirectEntityDamageSource;
+        var isGunshot = source.isIndirect();
         var isHoldingSword = !isGunshot && isHoldingSword(attacker);
         if (!valid) {
             return isHoldingSword ? METAL_FAILURE.get() : PUNCH.get();

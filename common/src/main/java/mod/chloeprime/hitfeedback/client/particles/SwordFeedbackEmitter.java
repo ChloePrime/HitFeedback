@@ -2,6 +2,7 @@ package mod.chloeprime.hitfeedback.client.particles;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
@@ -23,7 +24,7 @@ public class SwordFeedbackEmitter extends ParticleEmitterBase {
         }
         var direction = hitDirections.compute(boundEntity, (k, v) -> !Objects.requireNonNullElse(v, random.nextBoolean()));
         var relX = UP.cross(relMotion).normalize();
-        var angle = random.nextDouble(-Math.PI / 12, Math.PI / 12) + (direction ? Math.PI : 0);
+        var angle = Mth.lerp(random.nextDouble(), -Math.PI / 12, Math.PI / 12) + (direction ? Math.PI : 0);
         var offsetDirection = relX.scale(Math.cos(angle)).add(UP.scale(Math.sin(angle)));
         var offsetAmount = 0.5;
         this.relPos = this.relPos.add(offsetDirection.scale(offsetAmount));
