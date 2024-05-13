@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:2.2.0")
+    include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:2.4.0")
 }
 
 configurations {
