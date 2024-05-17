@@ -24,7 +24,7 @@ public interface HitFeedbackAction extends BiConsumer<S2CHitFeedback, NetworkMan
             if (ClientConfig.PARTICLE_AMOUNT.get() == 0) {
                 return;
             }
-            if (Minecraft.getInstance().options.particles == ParticleStatus.MINIMAL) {
+            if (Minecraft.getInstance().options.particles().get() == ParticleStatus.MINIMAL) {
                 return;
             }
             var pos = packet.position;
