@@ -5,6 +5,8 @@ import mod.chloeprime.hitfeedback.client.particles.ParticleEmitterBase;
 import mod.chloeprime.hitfeedback.common.particle.ModParticleTypes;
 import mod.chloeprime.hitfeedback.mixin.client.ParticleEngineAccessor;
 import mod.chloeprime.hitfeedback.network.S2CHitFeedback;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.ParticleStatus;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;
 
@@ -20,6 +22,9 @@ public interface HitFeedbackAction extends BiConsumer<S2CHitFeedback, NetworkMan
     static HitFeedbackAction addEmitter(Supplier<? extends ParticleOptions> particle, ParticleEmitterBase.Builder builder, ParticleEmitterBase.Constructor constructor) {
         return (packet, context) -> {
             if (ClientConfig.PARTICLE_AMOUNT.get() == 0) {
+                return;
+            }
+            if (Minecraft.getInstance().options.particles == ParticleStatus.MINIMAL) {
                 return;
             }
             var pos = packet.position;

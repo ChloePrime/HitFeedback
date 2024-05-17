@@ -24,7 +24,11 @@ public class ParticleEmitterBase extends TrackingEmitter {
     protected Vec3 relMotion;
     @SuppressWarnings("FieldMayBeFinal")
     private boolean prepared;
-    private final float configRate = ClientConfig.PARTICLE_AMOUNT.get().floatValue();
+    private final float configRate = ClientConfig.PARTICLE_AMOUNT.get().floatValue() * switch (Minecraft.getInstance().options.particles) {
+        case ALL -> 1F;
+        case DECREASED -> 0.5F;
+        case MINIMAL -> 0F;
+    };
 
     public ParticleEmitterBase(ParticleOptions particle, Builder builder, Entity entity, ClientLevel clientLevel, double x, double y, double z, double g, double h, double i) {
         super(clientLevel, entity, particle, builder.life);
