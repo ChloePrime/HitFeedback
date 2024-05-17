@@ -23,6 +23,7 @@
   "depends": {
     "fabricloader": ">=0.15.11",
     "minecraft": ">=1.18.2",
-    "architectury": ">=4.0.0"
+    "architectury": ">=4",
+    "forgeconfigapiport": ">=3"
   }
 }

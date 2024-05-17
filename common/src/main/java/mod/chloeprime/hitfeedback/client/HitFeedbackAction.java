@@ -19,6 +19,9 @@ public interface HitFeedbackAction extends BiConsumer<S2CHitFeedback, NetworkMan
 
     static HitFeedbackAction addEmitter(Supplier<? extends ParticleOptions> particle, ParticleEmitterBase.Builder builder, ParticleEmitterBase.Constructor constructor) {
         return (packet, context) -> {
+            if (ClientConfig.PARTICLE_AMOUNT.get() == 0) {
+                return;
+            }
             var pos = packet.position;
             var vel = packet.velocity;
             var entity = packet.getEntity(context.getPlayer().getLevel());

@@ -1,6 +1,7 @@
 package mod.chloeprime.hitfeedback.client.particles;
 
 import com.google.common.base.Suppliers;
+import mod.chloeprime.hitfeedback.client.ClientConfig;
 import mod.chloeprime.hitfeedback.mixin.client.TrackingEmitterAccessor;
 import mod.chloeprime.hitfeedback.util.Basis;
 import net.minecraft.client.Minecraft;
@@ -23,6 +24,7 @@ public class ParticleEmitterBase extends TrackingEmitter {
     protected Vec3 relMotion;
     @SuppressWarnings("FieldMayBeFinal")
     private boolean prepared;
+    private final float configRate = ClientConfig.PARTICLE_AMOUNT.get().floatValue();
 
     public ParticleEmitterBase(ParticleOptions particle, Builder builder, Entity entity, ClientLevel clientLevel, double x, double y, double z, double g, double h, double i) {
         super(clientLevel, entity, particle, builder.life);
@@ -81,15 +83,15 @@ public class ParticleEmitterBase extends TrackingEmitter {
             if (goreOnly) {
                 float cnt = goreSpawnRate;
                 while (cnt >= 1) {
-                    ENGINE.get().add(new EntityPieceParticle(((TrackingEmitterAccessor) this).getEntity(), level, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z));
+                    wrapConfigRate(() -> ENGINE.get().add(new EntityPieceParticle(((TrackingEmitterAccessor) this).getEntity(), level, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z)));
                     cnt -= 1;
                 }
                 if (cnt > 0 && Math.random() < cnt) {
-                    ENGINE.get().add(new EntityPieceParticle(((TrackingEmitterAccessor) this).getEntity(), level, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z));
+                    wrapConfigRate(() -> ENGINE.get().add(new EntityPieceParticle(((TrackingEmitterAccessor) this).getEntity(), level, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z)));
                 }
                 continue;
             }
-            level.addParticle(particle, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
+            wrapConfigRate(() -> level.addParticle(particle, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z));
             if (goreSpawnRate <= 0) {
                 continue;
             }
@@ -97,8 +99,14 @@ public class ParticleEmitterBase extends TrackingEmitter {
                 if (Math.random() > goreSpawnRate / 4) {
                     continue;
                 }
-                ENGINE.get().add(new EntityPieceParticle(((TrackingEmitterAccessor) this).getEntity(), level, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z));
+                wrapConfigRate(() -> ENGINE.get().add(new EntityPieceParticle(((TrackingEmitterAccessor) this).getEntity(), level, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z)));
             }
+        }
+    }
+
+    private void wrapConfigRate(Runnable action) {
+        if (Math.random() <= configRate) {
+            action.run();
         }
     }
 
