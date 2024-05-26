@@ -27,7 +27,7 @@ public class EntityPieceParticle extends SingleQuadParticle {
         this.lifetime += random.nextInt(40, 100);
 
         var tex = getEntityTexture(entity);
-        this.valid = tex.isPresent();
+        this.valid = tex.filter(t -> t.width >= SIZE && t.height >= SIZE).isPresent();
         this.texture = valid ? tex.get().texture : MissingTextureAtlasSprite.getLocation();
         var w = valid ? tex.get().width : 1;
         var h = valid ? tex.get().height : 1;
@@ -62,7 +62,7 @@ public class EntityPieceParticle extends SingleQuadParticle {
         }
 
         return texture
-                .map(tex -> MC.getTextureManager().getTexture(tex))
+                .map(MC.getTextureManager()::getTexture)
                 .map(tex -> tex instanceof SizedTexture simple ? simple : null)
                 .map(tex -> new EntityTextureInfo(texture.get(), tex.hit_feedback$getWidth(), tex.hit_feedback$getHeight(), tex.hit_feedback$getFillRate()));
     }

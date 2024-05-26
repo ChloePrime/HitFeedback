@@ -35,6 +35,7 @@ dependencies {
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${rootProject.forge_config_api_version}"
     compileOnly 'com.electronwill.night-config:toml:3.6.4'
+    modImplementation "maven.modrinth:azurelib:${rootProject.azurelib_version_fabric}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

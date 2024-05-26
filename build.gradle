@@ -20,6 +20,19 @@ subprojects {
             name = "Fuzs Mod Resources (Forge Config API Port)"
             url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
         }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Modrinth"
+                    url = "https://api.modrinth.com/maven"
+                }
+            }
+            filter {
+                includeGroup "maven.modrinth"
+            }
+        }
+        // AzureLib
+        // maven {url 'https://libs.azuredoom.com:4443/mods'}
     }
 
     dependencies {

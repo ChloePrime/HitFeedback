@@ -9,7 +9,8 @@
   "client": [
     "MixinSimpleTexture",
     "client.ParticleEngineAccessor",
-    "client.TrackingEmitterAccessor"
+    "client.TrackingEmitterAccessor",
+    "compat.azurelib.client.MixinAzureLibTexture"
   ],
   "injectors": {
     "defaultRequire": 1
