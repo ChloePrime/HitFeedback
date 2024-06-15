@@ -1,9 +1,11 @@
 package mod.chloeprime.hitfeedback.client.particles;
 
+import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import mod.chloeprime.hitfeedback.client.internal.SizedTexture;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SingleQuadParticle;
@@ -12,8 +14,12 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL13;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static mod.chloeprime.hitfeedback.client.MinecraftHolder.MC;
 
@@ -72,15 +78,56 @@ public class EntityPieceParticle extends SingleQuadParticle {
         return ParticleRenderType.CUSTOM;
     }
 
-    @Override
-    public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
-        if (!valid || !(buffer instanceof BufferBuilder builder)) {
+    private static final Map<ResourceLocation, BufferBuilder> BUFFER_TABLE = new LinkedHashMap<>();
+    private static final Supplier<Tesselator> TESLA = Suppliers.memoize(Tesselator::getInstance);
+    private static PoseStack POSE;
+
+    public static void beforeRender(PoseStack pose) {
+        BUFFER_TABLE.clear();
+        POSE = pose;
+    }
+
+    public static void doRender() {
+        withRenderSystemShit(() -> {
+            var texManager = Minecraft.getInstance().getTextureManager();
+            BUFFER_TABLE.forEach((texture, buffer) -> {
+                RenderSystem.setShaderTexture(0, texture);
+                RenderSystem.applyModelViewMatrix();
+                ParticleRenderType.CUSTOM.begin(buffer, texManager);
+                BufferUploader.drawWithShader(buffer.end());
+            });
+            BUFFER_TABLE.clear();
+        });
+    }
+
+    private static void withRenderSystemShit(Runnable code) {
+        if (POSE == null) {
             return;
         }
-        RenderSystem.setShaderTexture(0, texture);
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+        RenderSystem.enableDepthTest();
+        RenderSystem.activeTexture(GL13.GL_TEXTURE2);
+        RenderSystem.activeTexture(GL13.GL_TEXTURE0);
+        RenderSystem.depthMask(true);
+        RenderSystem.disableBlend();
+        PoseStack pose = RenderSystem.getModelViewStack();
+        pose.pushPose();
+        pose.mulPoseMatrix(POSE.last().pose());
+        RenderSystem.applyModelViewMatrix();
+        code.run();
+        pose.popPose();
+    }
+
+    @Override
+    public void render(VertexConsumer ignored, Camera renderInfo, float partialTicks) {
+        if (!valid) {
+            return;
+        }
+        var buffer = BUFFER_TABLE.computeIfAbsent(texture, tex -> {
+            var builder = TESLA.get().getBuilder();
+            builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+            return builder;
+        });
         super.render(buffer, renderInfo, partialTicks);
-        BufferUploader.drawWithShader(builder.end());
     }
 
     @Override

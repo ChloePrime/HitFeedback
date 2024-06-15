@@ -6,6 +6,7 @@
   "mixins": [
   ],
   "client": [
+    "client.MixinParticleEngine"
   ],
   "injectors": {
     "defaultRequire": 1
