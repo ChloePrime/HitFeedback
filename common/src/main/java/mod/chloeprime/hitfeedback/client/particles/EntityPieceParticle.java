@@ -1,6 +1,5 @@
 package mod.chloeprime.hitfeedback.client.particles;
 
-import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import mod.chloeprime.hitfeedback.client.internal.SizedTexture;
@@ -19,7 +18,6 @@ import org.lwjgl.opengl.GL13;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import static mod.chloeprime.hitfeedback.client.MinecraftHolder.MC;
 
@@ -78,25 +76,37 @@ public class EntityPieceParticle extends SingleQuadParticle {
         return ParticleRenderType.CUSTOM;
     }
 
-    private static final Map<ResourceLocation, BufferBuilder> BUFFER_TABLE = new LinkedHashMap<>();
-    private static final Supplier<Tesselator> TESLA = Suppliers.memoize(Tesselator::getInstance);
+    private static final Map<ResourceLocation, BufferRecord> BUFFER_TABLE = new LinkedHashMap<>();
     private static PoseStack POSE;
 
+    private static class BufferRecord {
+        public final Tesselator tesselator;
+        public boolean hasContent;
+
+        private BufferRecord(Tesselator tesselator) {
+            this.tesselator = tesselator;
+        }
+    }
+
     public static void beforeRender(PoseStack pose) {
-        BUFFER_TABLE.clear();
         POSE = pose;
     }
 
     public static void doRender() {
         withRenderSystemShit(() -> {
             var texManager = Minecraft.getInstance().getTextureManager();
-            BUFFER_TABLE.forEach((texture, buffer) -> {
+            BUFFER_TABLE.forEach((texture, rec) -> {
+                if (!rec.hasContent) {
+                    return;
+                }
+                rec.hasContent = false;
+
                 RenderSystem.setShaderTexture(0, texture);
                 RenderSystem.applyModelViewMatrix();
-                ParticleRenderType.CUSTOM.begin(buffer, texManager);
-                BufferUploader.drawWithShader(buffer.end());
+
+                ParticleRenderType.CUSTOM.begin(rec.tesselator.getBuilder(), texManager);
+                rec.tesselator.end();
             });
-            BUFFER_TABLE.clear();
         });
     }
 
@@ -122,11 +132,12 @@ public class EntityPieceParticle extends SingleQuadParticle {
         if (!valid) {
             return;
         }
-        var buffer = BUFFER_TABLE.computeIfAbsent(texture, tex -> {
-            var builder = TESLA.get().getBuilder();
-            builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-            return builder;
-        });
+        var data = BUFFER_TABLE.computeIfAbsent(texture, tex -> new BufferRecord(new Tesselator(0x4000)));
+        var buffer = data.tesselator.getBuilder();
+        if (!data.hasContent) {
+            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+            data.hasContent = true;
+        }
         super.render(buffer, renderInfo, partialTicks);
     }
 

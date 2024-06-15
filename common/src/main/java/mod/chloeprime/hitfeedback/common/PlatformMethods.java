@@ -6,6 +6,6 @@ import net.minecraft.world.entity.Entity;
 public class PlatformMethods {
     @ExpectPlatform
     public static double getAttackReach(@SuppressWarnings("unused") Entity entity) {
-        throw new AssertionError("Expect Platform");
+         throw new AssertionError("Expect Platform");
     }
 }

@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinParticleEngine {
     @Inject(
             method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/culling/Frustum;)V",
+            remap = false,
             at = @At("HEAD"))
     private void beginCustomParticlePieceRender(PoseStack poseStack, MultiBufferSource.BufferSource arg2, LightTexture arg3, Camera arg4, float f, Frustum clippingHelper, CallbackInfo ci) {
         EntityPieceParticle.beforeRender(poseStack);
@@ -23,6 +24,7 @@ public class MixinParticleEngine {
 
     @Inject(
             method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/culling/Frustum;)V",
+            remap = false,
             at = @At(value = "RETURN")
     )
     private void endCustomParticleRender(PoseStack arg, MultiBufferSource.BufferSource arg2, LightTexture lightTexture, Camera arg4, float f, Frustum clippingHelper, CallbackInfo ci) {
