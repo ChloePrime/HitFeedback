@@ -3,17 +3,7 @@ plugins {
 }
 architectury {
     platformSetupLoomIde()
-    forge()
-}
-
-loom {
-    forge {
-        mixinConfigs = [
-                "hit_feedback.mixins.json",
-                "hit_feedback-common.mixins.json"
-        ]
-        convertAccessWideners = true
-    }
+    neoForge()
 }
 
 configurations {
@@ -21,17 +11,26 @@ configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
-    developmentForge.extendsFrom common
+    developmentNeoForge.extendsFrom common
+}
+
+repositories {
+    maven { url 'https://maven.neoforged.net/releases/' }
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:${rootProject.forge_version}"
+    neoForge "net.neoforged:neoforge:${forge_version}"
     // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
-    modImplementation "maven.modrinth:azurelib:${rootProject.azurelib_version_forge}"
+    modApi "dev.architectury:architectury-neoforge:${architectury_version}"
+    if (AZURELIB_ENABLED as boolean) {
+        modImplementation "maven.modrinth:azurelib:${azurelib_version_forge}"
+    }
+    if ("resourceful".equalsIgnoreCase(CONFIG_TYPE)) {
+        include modImplementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${minecraft_version}:${resourceful_config_version}")
+    }
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }
 }
 
 processResources {

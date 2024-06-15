@@ -69,3 +69,8 @@ description="Add blood and gore as hit feedback."
    versionRange="[9,)"
    ordering="NONE"
    side="BOTH"
+
+[[mixins]]
+   config = "hit_feedback.mixins.json"
+[[mixins]]
+   config = "hit_feedback-common.mixins.json"

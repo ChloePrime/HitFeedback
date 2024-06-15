@@ -1,19 +1,22 @@
 package mod.chloeprime.hitfeedback.network;
 
 import dev.architectury.networking.NetworkManager;
+import mod.chloeprime.hitfeedback.HitFeedbackMod;
 import mod.chloeprime.hitfeedback.client.HitFeedbackClient;
 import mod.chloeprime.hitfeedback.common.HitFeedbackType;
 import mod.chloeprime.hitfeedback.common.HitFeedbackTypes;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
-public class S2CHitFeedback {
+public class S2CHitFeedback implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<S2CHitFeedback> TYPE = new Type<>(HitFeedbackMod.loc("feedback"));
+
     public final int entityId;
     public final HitFeedbackType type;
     public final Vec3 position;
@@ -31,7 +34,7 @@ public class S2CHitFeedback {
         return Optional.ofNullable(level.getEntity(entityId)).orElseThrow(() -> new IllegalStateException("Invalid entity ID"));
     }
 
-    public S2CHitFeedback(FriendlyByteBuf buf) {
+    public S2CHitFeedback(RegistryFriendlyByteBuf buf) {
         this.entityId = buf.readVarInt();
         var fbTypeId = buf.readResourceLocation();
         var posX = buf.readDouble();
@@ -46,18 +49,23 @@ public class S2CHitFeedback {
         this.velocity = new Vec3(normalX, normalY, normalZ);
     }
 
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeVarInt(entityId);
-        buf.writeResourceLocation(Optional.ofNullable(HitFeedbackTypes.REGISTRY.getId(type)).orElseThrow(() -> new IllegalStateException("Unregistered feedback type: %s".formatted(type))));
-        buf.writeDouble(position.x);
-        buf.writeDouble(position.y);
-        buf.writeDouble(position.z);
-        buf.writeDouble(velocity.x);
-        buf.writeDouble(velocity.y);
-        buf.writeDouble(velocity.z);
+    public static void encode(RegistryFriendlyByteBuf buf, S2CHitFeedback self) {
+        buf.writeVarInt(self.entityId);
+        buf.writeResourceLocation(Optional.ofNullable(HitFeedbackTypes.REGISTRY.getId(self.type)).orElseThrow(() -> new IllegalStateException("Unregistered feedback type: %s".formatted(self.type))));
+        buf.writeDouble(self.position.x);
+        buf.writeDouble(self.position.y);
+        buf.writeDouble(self.position.z);
+        buf.writeDouble(self.velocity.x);
+        buf.writeDouble(self.velocity.y);
+        buf.writeDouble(self.velocity.z);
     }
 
-    public void handle(Supplier<NetworkManager.PacketContext> ctx) {
-        ctx.get().queue(() -> HitFeedbackClient.handleFeedbackPacket(this, ctx.get()));
+    public void handle(NetworkManager.PacketContext ctx) {
+        ctx.queue(() -> HitFeedbackClient.handleFeedbackPacket(this, ctx));
+    }
+
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

@@ -57,7 +57,7 @@ public class HitFeedbackType {
 
     private static HitFeedbackType matchDefault(DamageSource source, LivingEntity victim, boolean valid) {
         var attacker = source.getEntity();
-        var isGunshot = source.isIndirect();
+        var isGunshot = !source.isDirect();
         var isHoldingSword = !isGunshot && isHoldingSword(attacker);
         if (!valid) {
             return isHoldingSword ? METAL_FAILURE.get() : PUNCH.get();
@@ -80,8 +80,20 @@ public class HitFeedbackType {
         return isWeapon(livingAttacker.getMainHandItem(), EquipmentSlot.MAINHAND) || isWeapon(livingAttacker.getOffhandItem(), EquipmentSlot.OFFHAND);
     }
 
+    @SuppressWarnings("deprecation")
     private static boolean isWeapon(ItemStack stack, EquipmentSlot hand) {
-        return stack.getItem().getDefaultAttributeModifiers(hand).get(Attributes.ATTACK_DAMAGE).stream()
-                .anyMatch(mdf -> mdf.getOperation() == AttributeModifier.Operation.ADDITION && mdf.getAmount() > 0);
+        boolean[] result = new boolean[1];
+        stack.getItem().getDefaultInstance().forEachModifier(hand, (attribute, modifier) -> {
+            if (result[0]) {
+                return;
+            }
+            if (!attribute.is(Attributes.ATTACK_DAMAGE) || modifier.operation() != AttributeModifier.Operation.ADD_VALUE) {
+                return;
+            }
+            if (modifier.amount() > 0) {
+                result[0] = true;
+            }
+        });
+        return result[0];
     }
 }

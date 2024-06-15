@@ -13,12 +13,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static mod.chloeprime.hitfeedback.client.MinecraftHolder.MC;
 
 public class EntityPieceParticle extends SingleQuadParticle {
     public static final int SIZE = 4;
+    private static final Tesselator TESLA = Tesselator.getInstance();
 
     protected EntityPieceParticle(Entity entity, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
         super(level, x, y, z, xSpeed, ySpeed, zSpeed);
@@ -45,6 +48,7 @@ public class EntityPieceParticle extends SingleQuadParticle {
     ) {
     }
 
+    private static final Map<ResourceLocation, BufferBuilder> BUFFER_TABLE = new LinkedHashMap<>();
     private final ResourceLocation texture;
     private final boolean valid;
     private final float u0, v0;
@@ -72,15 +76,28 @@ public class EntityPieceParticle extends SingleQuadParticle {
         return ParticleRenderType.CUSTOM;
     }
 
+    public static void beforeRender() {
+        BUFFER_TABLE.clear();
+    }
+
+    public static void doRender() {
+        RenderSystem.depthMask(true);
+        RenderSystem.disableBlend();
+        BUFFER_TABLE.forEach((texture, buffer) -> {
+            RenderSystem.setShaderTexture(0, texture);
+            Optional.ofNullable(buffer.build()).ifPresent(BufferUploader::drawWithShader);
+        });
+        BUFFER_TABLE.clear();
+    }
+
+
     @Override
-    public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
-        if (!valid || !(buffer instanceof BufferBuilder builder)) {
+    public void render(VertexConsumer ignored, Camera renderInfo, float partialTicks) {
+        if (!valid) {
             return;
         }
-        RenderSystem.setShaderTexture(0, texture);
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+        var buffer = BUFFER_TABLE.computeIfAbsent(texture, tex -> TESLA.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE));
         super.render(buffer, renderInfo, partialTicks);
-        BufferUploader.drawWithShader(builder.end());
     }
 
     @Override

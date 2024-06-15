@@ -2,7 +2,6 @@ package mod.chloeprime.hitfeedback.common;
 
 import dev.architectury.networking.NetworkManager;
 import mod.chloeprime.hitfeedback.mixin.LivingEntityAccessor;
-import mod.chloeprime.hitfeedback.network.ModNetwork;
 import mod.chloeprime.hitfeedback.network.S2CHitFeedback;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -10,6 +9,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,8 @@ public class CommonEventHandler {
         var feedback = HitFeedbackType.match(source, victim, amount > 0);
         if (!feedback.isServerOnly()) {
             var packet = new S2CHitFeedback(victim, feedback, position, normal);
-            ((ServerLevel) victim.level()).getChunkSource().broadcast(victim, ModNetwork.CHANNEL.toPacket(NetworkManager.Side.S2C, packet));
+            var level = (ServerLevel) victim.level();
+            level.getChunkSource().broadcast(victim, NetworkManager.toPacket(NetworkManager.Side.S2C, packet, level.registryAccess()));
         }
         feedback.getHitSound().ifPresent(sound -> {
             var pitch = 1 + (victim.getRandom().nextFloat() - victim.getRandom().nextFloat()) * 0.2f;
@@ -64,7 +65,9 @@ public class CommonEventHandler {
     }
 
     private static Vec3 getMeleeHitPosition(@NotNull Entity swordsman, Entity victim) {
-        var reach = PlatformMethods.getAttackReach(swordsman);
+        var reach = swordsman instanceof Player player
+                ? player.entityInteractionRange()
+                : 32;
         var ray = swordsman.getLookAngle().scale(reach);
         var start = swordsman.getEyePosition();
         var end = start.add(ray);

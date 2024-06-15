@@ -1,7 +1,7 @@
 package mod.chloeprime.hitfeedback.mixin.compat.azurelib.client;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import mod.azure.azurelib.cache.texture.AnimatableTexture;
+import mod.azure.azurelib.common.internal.common.cache.texture.AnimatableTexture;
 import mod.chloeprime.hitfeedback.client.internal.SizedTexture;
 import mod.chloeprime.hitfeedback.util.ImageHelper;
 import net.minecraft.client.renderer.texture.SimpleTexture;

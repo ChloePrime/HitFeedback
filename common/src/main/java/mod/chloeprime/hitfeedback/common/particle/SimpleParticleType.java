@@ -1,7 +1,7 @@
 package mod.chloeprime.hitfeedback.common.particle;
 
-class SimpleParticleType extends net.minecraft.core.particles.SimpleParticleType {
-    protected SimpleParticleType() {
+public final class SimpleParticleType extends net.minecraft.core.particles.SimpleParticleType {
+    SimpleParticleType() {
         super(false);
     }
 }

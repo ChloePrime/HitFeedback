@@ -7,19 +7,6 @@ architectury {
     fabric()
 }
 
-repositories {
-    maven {
-        url "https://maven.jamieswhiteshirt.com/libs-release"
-        content {
-            includeGroup "com.jamieswhiteshirt"
-        }
-    }
-}
-
-dependencies {
-    include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:2.4.0")
-}
-
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
@@ -33,9 +20,18 @@ dependencies {
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${rootProject.forge_config_api_version}"
-    compileOnly 'com.electronwill.night-config:toml:3.6.4'
-    modImplementation "maven.modrinth:azurelib:${rootProject.azurelib_version_fabric}"
+
+    if ("forge".equalsIgnoreCase(CONFIG_TYPE)) {
+        modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${rootProject.forge_config_api_version}"
+        compileOnly 'com.electronwill.night-config:toml:3.6.4'
+    }
+    if ("resourceful".equalsIgnoreCase(CONFIG_TYPE)) {
+        include modImplementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-${minecraft_version}:${resourceful_config_version}")
+    }
+
+    if (AZURELIB_ENABLED) {
+        modCompileOnly "maven.modrinth:azurelib:${rootProject.azurelib_version_fabric}"
+    }
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

@@ -1,31 +1,30 @@
 package mod.chloeprime.hitfeedback.client;
 
+import dev.architectury.registry.registries.RegistrySupplier;
 import mod.chloeprime.hitfeedback.client.particles.GunshotFeedbackEmitter;
 import mod.chloeprime.hitfeedback.client.particles.ParticleEmitterBase;
 import mod.chloeprime.hitfeedback.client.particles.SwordFeedbackEmitter;
 import mod.chloeprime.hitfeedback.common.HitFeedbackType;
 import mod.chloeprime.hitfeedback.common.HitFeedbackTypes;
 import mod.chloeprime.hitfeedback.common.particle.ModParticleTypes;
-import mod.chloeprime.hitfeedback.util.ComparableSupplier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class HitFeedbackActions {
     private HitFeedbackActions() {}
 
-    public static void register(Supplier<HitFeedbackType> type, HitFeedbackAction action) {
-        registry.put(new ComparableSupplier<>(type), action);
+    public static void register(RegistrySupplier<HitFeedbackType> type, HitFeedbackAction action) {
+        registry.put(type.getKey().location(), action);
     }
 
     public static Optional<HitFeedbackAction> get(HitFeedbackType type) {
-        var key = new ComparableSupplier<>(() -> type);
-        return Optional.ofNullable(registry.get(key));
+        return Optional.ofNullable(registry.get(HitFeedbackTypes.REGISTRY.getId(type)));
     }
 
-    private static final Map<ComparableSupplier<HitFeedbackType>, HitFeedbackAction> registry = new LinkedHashMap<>();
+    private static final Map<ResourceLocation, HitFeedbackAction> registry = new LinkedHashMap<>();
 
     public static void init() {
         HitFeedbackActions.register(HitFeedbackTypes.FLESH_SWORD, HitFeedbackAction.addEmitter(
