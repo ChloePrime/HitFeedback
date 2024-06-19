@@ -2,12 +2,14 @@ package mod.chloeprime.hitfeedback.client.particles;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import mod.chloeprime.hitfeedback.client.MinecraftHolder;
 import mod.chloeprime.hitfeedback.client.internal.SizedTexture;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
@@ -39,36 +41,46 @@ public class EntityPieceParticle extends SingleQuadParticle {
         this.v0 = valid ? random.nextInt(h - SIZE + 1) / (float) h : 0;
         this.u1 = u0 + SIZE / (float) w;
         this.v1 = v0 + SIZE / (float) h;
+        this.illuminative = valid && (tex.get().packedLight == ILLUM_15 && super.getLightColor(MinecraftHolder.getPartialTick()) != ILLUM_15);
+    }
+
+    @Override
+    protected int getLightColor(float f) {
+        return illuminative ? ILLUM_15 : super.getLightColor(f);
     }
 
     public record EntityTextureInfo(
             ResourceLocation texture,
             int width,
             int height,
-            float fillRate
+            float fillRate,
+            int packedLight
     ) {
     }
 
+    private static final int ILLUM_15 = LightTexture.pack(15, 15);
     private final ResourceLocation texture;
     private final boolean valid;
     private final float u0, v0;
     private final float u1, v1;
+    private final boolean illuminative;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static Optional<EntityTextureInfo> getEntityTexture(Entity entity) {
-        var texture = Optional
+        Optional<EntityRenderer> renderer = Optional
                 .ofNullable(entity)
-                .map(MC.getEntityRenderDispatcher()::getRenderer)
-                .map((EntityRenderer d) -> d.getTextureLocation(entity));
+                .map(MC.getEntityRenderDispatcher()::getRenderer);
 
+        var texture = renderer.map(d -> d.getTextureLocation(entity));
         if (texture.isEmpty()) {
             return Optional.empty();
         }
 
+        var illum = renderer.stream().mapToInt(rd -> rd.getPackedLightCoords(entity, MinecraftHolder.getPartialTick())).findAny();
         return texture
                 .map(MC.getTextureManager()::getTexture)
                 .map(tex -> tex instanceof SizedTexture simple ? simple : null)
-                .map(tex -> new EntityTextureInfo(texture.get(), tex.hit_feedback$getWidth(), tex.hit_feedback$getHeight(), tex.hit_feedback$getFillRate()));
+                .map(tex -> new EntityTextureInfo(texture.get(), tex.hit_feedback$getWidth(), tex.hit_feedback$getHeight(), tex.hit_feedback$getFillRate(), illum.getAsInt()));
     }
 
     @Override

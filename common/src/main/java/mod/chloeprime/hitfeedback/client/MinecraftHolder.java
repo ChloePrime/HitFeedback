@@ -4,4 +4,7 @@ import net.minecraft.client.Minecraft;
 
 public class MinecraftHolder {
     public static final Minecraft MC = Minecraft.getInstance();
+    public static float getPartialTick() {
+        return MC.getDeltaFrameTime();
+    }
 }
