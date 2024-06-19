@@ -41,12 +41,12 @@ public class EntityPieceParticle extends SingleQuadParticle {
         this.v0 = valid ? random.nextInt(h - SIZE + 1) / (float) h : 0;
         this.u1 = u0 + SIZE / (float) w;
         this.v1 = v0 + SIZE / (float) h;
-        this.illuminative = valid && (tex.get().packedLight == ILLUM_15 && super.getLightColor(MinecraftHolder.getPartialTick()) != ILLUM_15);
+        this.illuminate = valid && isIlluminateTexture(tex.get().packedLight, super.getLightColor(MinecraftHolder.getPartialTick()));
     }
 
     @Override
     protected int getLightColor(float f) {
-        return illuminative ? ILLUM_15 : super.getLightColor(f);
+        return illuminate ? PACKED_LIGHT_15_15 : super.getLightColor(f);
     }
 
     public record EntityTextureInfo(
@@ -58,12 +58,21 @@ public class EntityPieceParticle extends SingleQuadParticle {
     ) {
     }
 
-    private static final int ILLUM_15 = LightTexture.pack(15, 15);
+    private static boolean isIlluminateTexture(int rendererPackedLight, int worldPackedLight) {
+        var wsl = LightTexture.sky(worldPackedLight);
+        var wbl = LightTexture.block(worldPackedLight);
+        var rsl = LightTexture.sky(rendererPackedLight);
+        var rbl = LightTexture.block(rendererPackedLight);
+
+        return ((rsl == 15 && wsl != 15) || (rbl == 15 && wbl != 15)) || (rsl > wsl + 1 || rbl > wbl + 1);
+    }
+
+    private static final int PACKED_LIGHT_15_15 = LightTexture.pack(15, 15);
     private final ResourceLocation texture;
     private final boolean valid;
     private final float u0, v0;
     private final float u1, v1;
-    private final boolean illuminative;
+    private final boolean illuminate;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static Optional<EntityTextureInfo> getEntityTexture(Entity entity) {
