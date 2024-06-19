@@ -64,7 +64,7 @@ public class EntityPieceParticle extends SingleQuadParticle {
         var rsl = LightTexture.sky(rendererPackedLight);
         var rbl = LightTexture.block(rendererPackedLight);
 
-        return ((rsl == 15 && wsl != 15) || (rbl == 15 && wbl != 15)) || (rsl > wsl + 1 || rbl > wbl + 1);
+        return ((rsl == 15 && wsl != 15) || (rbl == 15 && wbl != 15));
     }
 
     private static final int PACKED_LIGHT_15_15 = LightTexture.pack(15, 15);
