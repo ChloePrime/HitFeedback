@@ -129,6 +129,7 @@ public class EntityPieceParticle extends SingleQuadParticle {
                 rec.tesselator.end();
             });
         });
+        RenderSystem.applyModelViewMatrix();
     }
 
     private static void withRenderSystemShit(Runnable code) {
