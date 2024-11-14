@@ -36,8 +36,9 @@ public class CommonEventHandler {
             ((ServerLevel) victim.level()).getChunkSource().broadcast(victim, ModNetwork.CHANNEL.toPacket(NetworkManager.Side.S2C, packet));
         }
         feedback.getHitSound().ifPresent(sound -> {
+            var volume = Math.min(1, ((LivingEntityAccessor) victim).invokeGetSoundVolume());
             var pitch = 1 + (victim.getRandom().nextFloat() - victim.getRandom().nextFloat()) * 0.2f;
-            victim.playSound(sound, ((LivingEntityAccessor) victim).invokeGetSoundVolume(), pitch);
+            victim.playSound(sound, volume, pitch);
         });
     }
 
