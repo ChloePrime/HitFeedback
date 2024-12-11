@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.function.Supplier;
 
-public class ParticleEmitterBase extends TrackingEmitter {
+public class ParticleEmitterBase extends TrackingEmitter implements RatedEmitter {
     protected static final Supplier<ParticleEngine> ENGINE = Suppliers.memoize(() -> Minecraft.getInstance().particleEngine);
     protected final ParticleOptions particle;
     protected final int emitCountPerTick;
@@ -29,6 +29,7 @@ public class ParticleEmitterBase extends TrackingEmitter {
         case DECREASED -> 0.5F;
         case MINIMAL -> 0F;
     };
+    private float extraConfiguredSpawnRate = 1;
 
     public ParticleEmitterBase(ParticleOptions particle, Builder builder, Entity entity, ClientLevel clientLevel, double x, double y, double z, double g, double h, double i) {
         super(clientLevel, entity, particle, builder.life);
@@ -73,6 +74,11 @@ public class ParticleEmitterBase extends TrackingEmitter {
     }
 
     @Override
+    public void setSpawnRate(float rate) {
+        this.extraConfiguredSpawnRate = rate;
+    }
+
+    @Override
     public void tick() {
         if (!prepared) {
             return;
@@ -109,7 +115,7 @@ public class ParticleEmitterBase extends TrackingEmitter {
     }
 
     private void wrapConfigRate(Runnable action) {
-        if (Math.random() <= configRate) {
+        if (Math.random() <= configRate * extraConfiguredSpawnRate) {
             action.run();
         }
     }

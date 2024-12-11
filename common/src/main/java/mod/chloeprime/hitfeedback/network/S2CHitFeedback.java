@@ -18,12 +18,14 @@ public class S2CHitFeedback {
     public final HitFeedbackType type;
     public final Vec3 position;
     public final Vec3 velocity;
+    public final float strength;
 
-    public S2CHitFeedback(Entity entity, HitFeedbackType type, Vec3 position, Vec3 velocity) {
+    public S2CHitFeedback(Entity entity, HitFeedbackType type, Vec3 position, Vec3 velocity, float strength) {
         this.entityId = entity.getId();
         this.type = type;
         this.position = position;
         this.velocity = velocity;
+        this.strength = strength;
     }
 
     @NotNull
@@ -40,6 +42,7 @@ public class S2CHitFeedback {
         var normalX = buf.readDouble();
         var normalY = buf.readDouble();
         var normalZ = buf.readDouble();
+        this.strength = buf.readFloat();
 
         this.type = Optional.ofNullable(HitFeedbackTypes.REGISTRY.get(fbTypeId)).orElseThrow(() -> new IllegalStateException("Unknown feedback type: %s".formatted(fbTypeId)));
         this.position = new Vec3(posX, posY, posZ);
@@ -55,6 +58,7 @@ public class S2CHitFeedback {
         buf.writeDouble(velocity.x);
         buf.writeDouble(velocity.y);
         buf.writeDouble(velocity.z);
+        buf.writeFloat(strength);
     }
 
     public void handle(Supplier<NetworkManager.PacketContext> ctx) {

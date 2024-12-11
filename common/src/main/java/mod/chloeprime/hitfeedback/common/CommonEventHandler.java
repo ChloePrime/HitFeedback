@@ -30,9 +30,15 @@ public class CommonEventHandler {
         var normal = (isRangedAttack ? bullet.getDeltaMovement() : attacker.getLookAngle().with(Direction.Axis.Y, 0))
                 .normalize()
                 .scale(-velocity);
+
+        float maxHealthOfVictim = victim.getMaxHealth();
         var feedback = HitFeedbackType.match(source, victim, amount > 0);
+        var feedbackStrength = maxHealthOfVictim == 0
+                ? 1
+                : Mth.clamp(amount / maxHealthOfVictim, 0, 1);
+
         if (!feedback.isServerOnly()) {
-            var packet = new S2CHitFeedback(victim, feedback, position, normal);
+            var packet = new S2CHitFeedback(victim, feedback, position, normal, feedbackStrength);
             ((ServerLevel) victim.level()).getChunkSource().broadcast(victim, ModNetwork.CHANNEL.toPacket(NetworkManager.Side.S2C, packet));
         }
         feedback.getHitSound().ifPresent(sound -> {
