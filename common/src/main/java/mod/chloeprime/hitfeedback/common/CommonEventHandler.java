@@ -5,6 +5,7 @@ import mod.chloeprime.hitfeedback.mixin.LivingEntityAccessor;
 import mod.chloeprime.hitfeedback.network.ModNetwork;
 import mod.chloeprime.hitfeedback.network.S2CHitFeedback;
 import net.minecraft.core.Direction;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -13,6 +14,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.WeakHashMap;
 
 public class CommonEventHandler {
     public static void onEndAttack(DamageSource source, LivingEntity victim, float amount) {
@@ -41,11 +46,28 @@ public class CommonEventHandler {
             var packet = new S2CHitFeedback(victim, feedback, position, normal, feedbackStrength);
             ((ServerLevel) victim.level()).getChunkSource().broadcast(victim, ModNetwork.CHANNEL.toPacket(NetworkManager.Side.S2C, packet));
         }
+
+        // 播放音效
+        if (!acquireHitFeedbackTicket(victim)) {
+            return;
+        }
         feedback.getHitSound().ifPresent(sound -> {
             var volume = Math.min(1, ((LivingEntityAccessor) victim).invokeGetSoundVolume());
             var pitch = 1 + (victim.getRandom().nextFloat() - victim.getRandom().nextFloat()) * 0.2f;
             victim.playSound(sound, volume, pitch);
         });
+    }
+
+    private static final Map<LivingEntity, Long> LAST_SOUND_TIME_TABLE = new WeakHashMap<>();
+    private static boolean acquireHitFeedbackTicket(LivingEntity victim) {
+        return Optional.ofNullable(victim.getServer())
+                .map(MinecraftServer::overworld)
+                .filter(overworld -> {
+                    var now = overworld.getGameTime();
+                    var lastHurt = LAST_SOUND_TIME_TABLE.put(victim, now);
+                    return lastHurt == null || lastHurt < now;
+                })
+                .isPresent();
     }
 
     private static Vec3 getBulletHitPosition(@NotNull Entity bullet, Entity victim) {
