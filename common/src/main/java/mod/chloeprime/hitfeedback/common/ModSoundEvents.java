@@ -17,6 +17,6 @@ public interface ModSoundEvents {
     RegistrySupplier<SoundEvent> METAL_FAILURE = register("feedback.metal.failure");
 
     private static RegistrySupplier<SoundEvent> register(String id) {
-        return DFR.register(id, () -> SoundEvent.createFixedRangeEvent(HitFeedbackMod.loc(id), 16));
+        return DFR.register(id, () -> SoundEvent.createVariableRangeEvent(HitFeedbackMod.loc(id)));
     }
 }
