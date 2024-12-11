@@ -13,10 +13,10 @@ public interface ModSoundEvents {
     RegistrySupplier<SoundEvent> FLESH_PUNCH_HIT = register("feedback.flesh.punch");
     RegistrySupplier<SoundEvent> FLESH_SWORD_HIT = register("feedback.flesh.sword");
     RegistrySupplier<SoundEvent> FLESH_GUNSHOT = register("feedback.flesh.gunshot");
-    RegistrySupplier<SoundEvent> METAL = register("feedback.metal");
+//    RegistrySupplier<SoundEvent> METAL = register("feedback.metal");
     RegistrySupplier<SoundEvent> METAL_FAILURE = register("feedback.metal.failure");
 
     private static RegistrySupplier<SoundEvent> register(String id) {
-        return DFR.register(id, () -> SoundEvent.createVariableRangeEvent(HitFeedbackMod.loc(id)));
+        return DFR.register(id, () -> SoundEvent.createFixedRangeEvent(HitFeedbackMod.loc(id), 16));
     }
 }
