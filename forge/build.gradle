@@ -30,6 +30,9 @@ dependencies {
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
     modImplementation "maven.modrinth:azurelib:${rootProject.azurelib_version_forge}"
 
+    modRuntimeOnly "maven.modrinth:mantle:${rootProject.mantle_version}"
+    modRuntimeOnly "maven.modrinth:tinkers-construct:${rootProject.tconstruct_version}"
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }

@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:hoes",
+    {
+      "id": "#forge:shears",
+      "required": false
+    },
+    {
+      "id": "#c:shears",
+      "required": false
+    }
+  ]
+}

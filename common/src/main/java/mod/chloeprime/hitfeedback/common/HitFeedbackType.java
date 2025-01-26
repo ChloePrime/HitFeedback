@@ -1,6 +1,8 @@
 package mod.chloeprime.hitfeedback.common;
 
+import mod.chloeprime.hitfeedback.HitFeedbackMod;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -81,6 +83,9 @@ public class HitFeedbackType {
     }
 
     private static boolean isWeapon(ItemStack stack, EquipmentSlot hand) {
+        if (HitFeedbackMod.isSharpWeapon(stack)) {
+            return true;
+        }
         return stack.getItem().getDefaultAttributeModifiers(hand).get(Attributes.ATTACK_DAMAGE).stream()
                 .anyMatch(mdf -> mdf.getOperation() == AttributeModifier.Operation.ADDITION && mdf.getAmount() > 0);
     }
